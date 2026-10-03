@@ -58,7 +58,7 @@ class _RecuperarSenhaViewState extends State<RecuperarSenhaView> {
               SizedBox(height: 40),
 
               TextButton(onPressed: () {
-                Navigator.pushNamed(context, 'login');
+                Navigator.pushNamed(context, 'home_view');
               }, child: Text('SALVAR SENHA'))
             ],
           ),

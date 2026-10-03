@@ -1,5 +1,6 @@
 import 'package:device_preview_plus/device_preview_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocaliza_app/view/home_view.dart';
 
 import 'view/cadastro_usuario_view.dart';
 import 'view/login_view.dart';
@@ -24,8 +25,9 @@ class MainApp extends StatelessWidget {
       // ROTAS
       //
       
-      initialRoute: 'login',
+      initialRoute: 'home_view',
       routes: {
+        'home_view': (context) => const HomeView(),
         'login': (context) => const LoginView(),
         'cadastro_usuario': (context) => const CadastroUsuarioView(),
         'perfil': (context) => const PerfilView(),
@@ -35,7 +37,7 @@ class MainApp extends StatelessWidget {
 
       onUnknownRoute: (settings) {
         return MaterialPageRoute(
-          builder: (context) => LoginView(),
+          builder: (context) => HomeView(),
         );
       },
     );
