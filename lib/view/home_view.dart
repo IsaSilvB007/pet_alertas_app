@@ -35,7 +35,7 @@ class _HomeViewState extends State<HomeView> {
 
                 BotaoHome(
                   texto: 'ENTRAR',
-                  cor: Color(0xFF4B83AE),
+                  cor: const Color(0xFF4B83AE),
                   icone: Icons.arrow_forward,
                   onPressed: () {
                     Navigator.pushNamed(context, 'login');

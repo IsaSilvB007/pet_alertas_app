@@ -8,6 +8,9 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
+
+  bool _esconderSenha = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,33 +18,56 @@ class _LoginViewState extends State<LoginView> {
         child: Padding(
           padding: EdgeInsets.all(20),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.login, size: 90),
-              SizedBox(height: 30),
+              Center(
+                child: Image.asset(
+                  'assets/images/logo_amparapet_vertical.png',
+                  height: 140,
+                ),
+              ),
 
-              Text('E-MAIL', style: TextStyle(fontSize: 20)),
+              SizedBox(height: 70),
+
+              Center(
+                child: Text(
+                  'LOGIN',
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                ),
+              ),
+
+              Text(
+                'Email',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
+              ),
               TextField(
                 decoration: InputDecoration(
-                  labelText: 'E-mail',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
               ),
 
-              SizedBox(height: 10),
+              SizedBox(height: 25),
 
-              Text('SENHA', style: TextStyle(fontSize: 20)),
+              Text(
+                'Senha',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
+              ),
               TextField(
-                obscureText: true,
+                obscureText: _esconderSenha,
                 decoration: InputDecoration(
-                  labelText: 'Senha',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                   suffixIcon: IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.visibility_off),
+                    onPressed: () {
+                      setState(() {
+                        _esconderSenha = !_esconderSenha;
+                      });
+                    },
+                    icon: Icon(_esconderSenha ? Icons.visibility : Icons.visibility_off),
                   ),
                 ),
               ),
@@ -59,6 +85,31 @@ class _LoginViewState extends State<LoginView> {
                     style: TextStyle(fontSize: 16, color: Colors.blue.shade300),
                   ),
                 ),
+              ),
+
+              SizedBox(height: 50),
+
+              SizedBox(
+                width: double.infinity,
+                height: 40,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF4B83AE),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    )
+                  ),
+                  onPressed: () {
+                    Navigator.pushNamed(context, 'perfil');
+                  }, 
+                  child: Text(
+                    'ACESSAR',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  )),
               ),
             ],
           ),
