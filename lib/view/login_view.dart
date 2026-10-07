@@ -78,7 +78,7 @@ class _LoginViewState extends State<LoginView> {
                 alignment: AlignmentGeometry.centerRight,
                 child: TextButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, 'recuperar_senha');
+                    Navigator.pushNamed(context, 'redefinir_senha');
                   },
                   child: Text(
                     'Esqueceu a senha?',
