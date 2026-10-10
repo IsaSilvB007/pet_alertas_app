@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class PerfilView extends StatefulWidget {
-  const PerfilView({super.key});
+class AvisosView extends StatefulWidget {
+  const AvisosView({super.key});
 
   @override
-  State<PerfilView> createState() => _PerfilViewState();
+  State<AvisosView> createState() => _AvisosViewState();
 }
 
-class _PerfilViewState extends State<PerfilView> {
+class _AvisosViewState extends State<AvisosView> {
   @override
   Widget build(BuildContext context) {
     

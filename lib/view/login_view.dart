@@ -100,7 +100,7 @@ class _LoginViewState extends State<LoginView> {
                     )
                   ),
                   onPressed: () {
-                    Navigator.pushNamed(context, 'perfil');
+                    Navigator.pushNamed(context, 'home_mapa');
                   }, 
                   child: Text(
                     'ACESSAR',
