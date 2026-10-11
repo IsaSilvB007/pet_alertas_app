@@ -29,7 +29,7 @@ class _HomeMapaViewState extends State<HomeMapaView> {
 
 Widget _buildMapBackground() {
   return Positioned.fill(
-    child: Image.asset('assets/images/mapa_placeholder.jpg', fit: BoxFit.cover),
+    child: Image.asset('assets/images/map_layout.png', fit: BoxFit.cover),
   );
 }
 
