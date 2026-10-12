@@ -8,16 +8,72 @@ class HomeMapaView extends StatefulWidget {
 }
 
 class _HomeMapaViewState extends State<HomeMapaView> {
+  // 1. CHAVE PARA CONTROLAR O DRAWER PROGRAMATICAMENTE
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
+
+      drawer: Drawer(
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0xFFB9DDF7), Color(0xFFFFC9CF)],
+              ),
+          ),
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              UserAccountsDrawerHeader(
+                decoration: BoxDecoration(color: Colors.transparent),
+                accountName: Text(
+                  'Isadora Bispo',
+                  style: TextStyle(
+                    color: Color(0xFF1E293B),
+                    fontWeight: FontWeight.bold,
+                  ),
+                  ), 
+                accountEmail: Text(
+                  'isadora.bispo@aluno.cps.sp.gov.br',
+                  style: TextStyle(color: Color(0xFF475569)),
+                  ),
+                  currentAccountPicture: CircleAvatar(
+                    backgroundColor: Color(0xFF334155),
+                    child: Icon(Icons.person, color: Colors.white),
+                  ),
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.person, color: Color(0xFF1E293B)),
+                    title: Text('Perfil do Usuário'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, 'perfil');
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.info_outline, color: Color(0xFF1E293B)),
+                    title: Text('Sobre o Projeto'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, 'sobre');
+                    },
+                  ),
+            ],
+          ),
+        ),
+      ),
+
       body: Stack(
         children: [
           // CAMADA 1: CAMADA DE FUNDO
           _buildMapBackground(),
 
           // CAMADA 2: CIMA (HEADER + BUSCA + FILTROS)
-          _buildHeaderOverlay(context),
+          _buildHeaderOverlay(context, _scaffoldKey),
 
           // CAMADA 3: BAIXO (BOTÃO DE AÇÃO)
           _buildFloatingActionButton(context),
@@ -33,7 +89,7 @@ Widget _buildMapBackground() {
   );
 }
 
-Widget _buildHeaderOverlay(BuildContext context) {
+Widget _buildHeaderOverlay(BuildContext context, GlobalKey<ScaffoldState> scaffoldKey) {
   return Positioned(
     top: 0,
     left: 0,
@@ -52,7 +108,9 @@ Widget _buildHeaderOverlay(BuildContext context) {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    scaffoldKey.currentState?.openDrawer();
+                  },
                   icon: Icon(Icons.menu, color: Colors.white),
                 ),
 

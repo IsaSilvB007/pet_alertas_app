@@ -4,6 +4,7 @@ import 'package:geolocaliza_app/view/avisos_view.dart';
 import 'package:geolocaliza_app/view/emitir_alerta_view.dart';
 import 'package:geolocaliza_app/view/gerenciar_alertas_view.dart';
 import 'package:geolocaliza_app/view/home_view.dart';
+import 'package:geolocaliza_app/view/perfil_view.dart';
 import 'package:geolocaliza_app/view/sobre_ongs_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -65,6 +66,7 @@ class MainApp extends StatelessWidget {
         'avisos':(context) => const AvisosView(),
         'gerenciar_alertas':(context) => const GerenciarAlertasView(),
         'sobre_ongs':(context) => const SobreOngsView(),
+        'perfil':(context) => const PerfilView(),
       },
 
       onUnknownRoute: (settings) {
