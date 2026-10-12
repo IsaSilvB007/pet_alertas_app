@@ -11,6 +11,7 @@ class _EmitirAlertaViewState extends State<EmitirAlertaView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -208,7 +209,7 @@ class _EmitirAlertaViewState extends State<EmitirAlertaView> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFFFF7043),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadiusGeometry.circular(15),
+                        borderRadius: BorderRadius.circular(15),
                       )
                     ),
                     onPressed: () {}, 
