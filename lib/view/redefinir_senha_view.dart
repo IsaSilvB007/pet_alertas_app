@@ -63,8 +63,8 @@ class _RedefinirSenhaViewState extends State<RedefinirSenhaView> {
                     },
                     icon: Icon(
                       _esconderNovaSenha
-                          ? Icons.visibility_off
-                          : Icons.visibility,
+                          ? Icons.visibility
+                          : Icons.visibility_off,
                     ),
                   ),
                 ),
@@ -90,8 +90,8 @@ class _RedefinirSenhaViewState extends State<RedefinirSenhaView> {
                     },
                     icon: Icon(
                       _esconderConfirmarSenha
-                          ? Icons.visibility_off
-                          : Icons.visibility,
+                          ? Icons.visibility
+                          : Icons.visibility_off,
                     ),
                   ),
                 ),
