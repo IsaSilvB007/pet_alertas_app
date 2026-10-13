@@ -42,7 +42,7 @@ class _AvisosViewState extends State<AvisosView> {
                       alignment: Alignment.centerLeft,
                       child: IconButton(
                         onPressed: () {
-                          Navigator.pushNamed(context, 'home_mapa');
+                          Navigator.pop(context);
                         },
                         icon: Icon(Icons.arrow_back, color: Color(0xFF1E293B)),
                       ),

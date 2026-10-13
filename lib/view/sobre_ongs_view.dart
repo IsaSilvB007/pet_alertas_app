@@ -18,7 +18,7 @@ class _SobreOngsViewState extends State<SobreOngsView> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFF1E293B)),
           onPressed: () {
-            Navigator.pushNamed(context, 'home_mapa');
+            Navigator.pop(context);
           },
         ),
         title: const Text(

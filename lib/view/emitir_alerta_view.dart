@@ -19,7 +19,7 @@ class _EmitirAlertaViewState extends State<EmitirAlertaView> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.pushNamed(context, 'home_mapa');
+            Navigator.pop(context);
           }),
         title: Text(
           'Emitir Alerta',

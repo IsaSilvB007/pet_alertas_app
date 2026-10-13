@@ -38,7 +38,7 @@ class _HomeMapaViewState extends State<HomeMapaView> {
                   ),
                   ), 
                 accountEmail: Text(
-                  'isadora.bispo@aluno.cps.sp.gov.br',
+                  'isadora.bispo@aluno.frp.br',
                   style: TextStyle(color: Color(0xFF475569)),
                   ),
                   currentAccountPicture: CircleAvatar(
