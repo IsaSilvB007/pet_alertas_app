@@ -10,6 +10,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_map: ^7.0.0
+  latlong2: ^0.9.0
+  geolocator: ^13.0.2
   
   # Dependências gerais do projeto
   cupertino_icons: ^1.0.8

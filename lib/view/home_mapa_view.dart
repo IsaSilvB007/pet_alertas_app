@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:geolocator/geolocator.dart';
 
 class HomeMapaView extends StatefulWidget {
   const HomeMapaView({super.key});
@@ -10,6 +13,57 @@ class HomeMapaView extends StatefulWidget {
 class _HomeMapaViewState extends State<HomeMapaView> {
   // 1. CHAVE PARA CONTROLAR O DRAWER PROGRAMATICAMENTE
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  // 2. CONTROLADOR E COORDENADAS PARA O FLUTTER_MAP
+  final MapController _mapController = MapController();
+  LatLng _initialPosition = const LatLng(-21.1775, -47.8103); // Ribeirão Preto como padrão
+  bool _loadingLocation = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _determinePosition();
+  }
+
+  // Função para obter a posição GPS atual
+  Future<void> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    try {
+      serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        setState(() => _loadingLocation = false);
+        return;
+      }
+
+      permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          setState(() => _loadingLocation = false);
+          return;
+        }
+      }
+      
+      if (permission == LocationPermission.deniedForever) {
+        setState(() => _loadingLocation = false);
+        return;
+      } 
+
+      Position position = await Geolocator.getCurrentPosition();
+      setState(() {
+        _initialPosition = LatLng(position.latitude, position.longitude);
+        _loadingLocation = false;
+      });
+
+      // Move a câmara do mapa para a posição do utilizador
+      _mapController.move(_initialPosition, 15);
+    } catch (e) {
+      debugPrint('Erro ao obter localização: $e');
+      setState(() => _loadingLocation = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +77,7 @@ class _HomeMapaViewState extends State<HomeMapaView> {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [Color(0xFFB9DDF7), Color(0xFFFFC9CF)],
-              ),
+            ),
           ),
           child: ListView(
             padding: EdgeInsets.zero,
@@ -36,32 +90,32 @@ class _HomeMapaViewState extends State<HomeMapaView> {
                     color: Color(0xFF1E293B),
                     fontWeight: FontWeight.bold,
                   ),
-                  ), 
+                ), 
                 accountEmail: Text(
                   'isadora.bispo@aluno.frp.br',
                   style: TextStyle(color: Color(0xFF475569)),
-                  ),
-                  currentAccountPicture: CircleAvatar(
-                    backgroundColor: Color(0xFF334155),
-                    child: Icon(Icons.person, color: Colors.white),
-                  ),
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.person, color: Color(0xFF1E293B)),
-                    title: Text('Perfil do Usuário'),
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.pushNamed(context, 'perfil');
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.info_outline, color: Color(0xFF1E293B)),
-                    title: Text('Sobre o Projeto'),
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.pushNamed(context, 'sobre');
-                    },
-                  ),
+                ),
+                currentAccountPicture: CircleAvatar(
+                  backgroundColor: Color(0xFF334155),
+                  child: Icon(Icons.person, color: Colors.white),
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.person, color: Color(0xFF1E293B)),
+                title: Text('Perfil do Usuário'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, 'perfil');
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.info_outline, color: Color(0xFF1E293B)),
+                title: Text('Sobre o Projeto'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, 'sobre');
+                },
+              ),
             ],
           ),
         ),
@@ -69,13 +123,29 @@ class _HomeMapaViewState extends State<HomeMapaView> {
 
       body: Stack(
         children: [
-          // CAMADA 1: CAMADA DE FUNDO
-          _buildMapBackground(),
+          // CAMADA 1: MAPA GRATUITO (OPENSTREETMAP)
+          Positioned.fill(
+            child: _loadingLocation
+                ? const Center(child: CircularProgressIndicator())
+                : FlutterMap(
+                    mapController: _mapController,
+                    options: MapOptions(
+                      initialCenter: _initialPosition,
+                      initialZoom: 15,
+                    ),
+                    children: [
+                      TileLayer(
+                        urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        userAgentPackageName: 'com.example.geolocaliza_app',
+                      ),
+                    ],
+                  ),
+          ),
 
-          // CAMADA 2: CIMA (HEADER + BUSCA + FILTROS)
+          // CAMADA 2: HEADER + BUSCA + FILTROS
           _buildHeaderOverlay(context, _scaffoldKey),
 
-          // CAMADA 3: BAIXO (BOTÃO DE AÇÃO)
+          // CAMADA 3: BOTÃO DE AÇÃO
           _buildFloatingActionButton(context),
         ],
       ),
@@ -83,18 +153,11 @@ class _HomeMapaViewState extends State<HomeMapaView> {
   }
 }
 
-Widget _buildMapBackground() {
-  return Positioned.fill(
-    child: Image.asset('assets/images/map_layout.png', fit: BoxFit.cover),
-  );
-}
-
 Widget _buildHeaderOverlay(BuildContext context, GlobalKey<ScaffoldState> scaffoldKey) {
   return Positioned(
     top: 0,
     left: 0,
     right: 0,
-
     child: Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
@@ -113,7 +176,6 @@ Widget _buildHeaderOverlay(BuildContext context, GlobalKey<ScaffoldState> scaffo
                   },
                   icon: Icon(Icons.menu, color: Colors.white),
                 ),
-
                 Text(
                   'AmparaPet',
                   style: TextStyle(
@@ -122,14 +184,12 @@ Widget _buildHeaderOverlay(BuildContext context, GlobalKey<ScaffoldState> scaffo
                     fontSize: 20,
                   ),
                 ),
-
                 Stack(
                   children: [
                     IconButton(
                       onPressed: () {},
                       icon: Icon(Icons.notifications_none, color: Colors.white),
                     ),
-
                     Positioned(
                       top: 8,
                       right: 8,
@@ -146,9 +206,7 @@ Widget _buildHeaderOverlay(BuildContext context, GlobalKey<ScaffoldState> scaffo
                 ),
               ],
             ),
-
             SizedBox(height: 20),
-
             Container(
               height: 44,
               decoration: BoxDecoration(
@@ -162,7 +220,6 @@ Widget _buildHeaderOverlay(BuildContext context, GlobalKey<ScaffoldState> scaffo
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(22),
               ),
-
               child: TextField(
                 decoration: InputDecoration(
                   border: InputBorder.none,
@@ -172,9 +229,7 @@ Widget _buildHeaderOverlay(BuildContext context, GlobalKey<ScaffoldState> scaffo
                 ),
               ),
             ),
-
             SizedBox(height: 16),
-
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
@@ -209,9 +264,7 @@ Widget _buildHeaderOverlay(BuildContext context, GlobalKey<ScaffoldState> scaffo
                       ),
                     ),
                   ),
-
                   SizedBox(width: 8),
-
                   GestureDetector(
                     onTap: () {
                       Navigator.pushNamed(context, 'avisos');
@@ -243,9 +296,7 @@ Widget _buildHeaderOverlay(BuildContext context, GlobalKey<ScaffoldState> scaffo
                       ),
                     ),
                   ),
-
                   SizedBox(width: 8),
-
                   GestureDetector(
                     onTap: () {
                       Navigator.pushNamed(context, 'gerenciar_alertas');
