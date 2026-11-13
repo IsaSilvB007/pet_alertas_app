@@ -16,17 +16,21 @@ class _LoginViewState extends State<LoginView> {
   Future<void> _signInWithGoogle() async {
     try {
       GoogleAuthProvider googleProvider = GoogleAuthProvider();
-      UserCredential userCredential = await _auth.signInWithPopup(googleProvider);
-      
-      if (userCredential.user != null) {
+      UserCredential userCredential = await _auth.signInWithPopup(
+        googleProvider,
+      );
+
+      if (userCredential.user != null && mounted) {
         // Se o login for bem-sucedido, avança para o mapa
         Navigator.pushReplacementNamed(context, 'home_mapa');
       }
     } catch (e) {
-      print('Erro ao fazer login com o Google: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro ao entrar com o Google: $e')),
-      );
+      debugPrint('Erro ao fazer login com o Google: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erro ao entrar com o Google: $e')),
+        );
+      }
     }
   }
 
@@ -34,7 +38,8 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView( // Adicionado para evitar overflow em telas menores
+        child: SingleChildScrollView(
+          // Adicionado para evitar overflow em telas menores
           padding: const EdgeInsets.all(20),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -88,7 +93,9 @@ class _LoginViewState extends State<LoginView> {
                         _esconderSenha = !_esconderSenha;
                       });
                     },
-                    icon: Icon(_esconderSenha ? Icons.visibility : Icons.visibility_off),
+                    icon: Icon(
+                      _esconderSenha ? Icons.visibility : Icons.visibility_off,
+                    ),
                   ),
                 ),
               ),
@@ -123,7 +130,7 @@ class _LoginViewState extends State<LoginView> {
                   ),
                   onPressed: () {
                     Navigator.pushNamed(context, 'home_mapa');
-                  }, 
+                  },
                   child: const Text(
                     'ACESSAR',
                     style: TextStyle(
@@ -146,9 +153,16 @@ class _LoginViewState extends State<LoginView> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    side: const BorderSide(color: Color(0xFF4B83AE), width: 1.5),
+                    side: const BorderSide(
+                      color: Color(0xFF4B83AE),
+                      width: 1.5,
+                    ),
                   ),
-                  icon: const Icon(Icons.g_mobiledata, size: 30, color: Color(0xFF4B83AE)),
+                  icon: const Icon(
+                    Icons.g_mobiledata,
+                    size: 30,
+                    color: Color(0xFF4B83AE),
+                  ),
                   label: const Text(
                     'Entrar com o Google',
                     style: TextStyle(
