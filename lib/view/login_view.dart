@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -8,15 +9,33 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-
   bool _esconderSenha = true;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  // Função para fazer login com o Google (Adaptada para Web e Mobile)
+  Future<void> _signInWithGoogle() async {
+    try {
+      GoogleAuthProvider googleProvider = GoogleAuthProvider();
+      UserCredential userCredential = await _auth.signInWithPopup(googleProvider);
+      
+      if (userCredential.user != null) {
+        // Se o login for bem-sucedido, avança para o mapa
+        Navigator.pushReplacementNamed(context, 'home_mapa');
+      }
+    } catch (e) {
+      print('Erro ao fazer login com o Google: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao entrar com o Google: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(20),
+        child: SingleChildScrollView( // Adicionado para evitar overflow em telas menores
+          padding: const EdgeInsets.all(20),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -28,16 +47,18 @@ class _LoginViewState extends State<LoginView> {
                 ),
               ),
 
-              SizedBox(height: 70),
+              const SizedBox(height: 50),
 
-              Center(
+              const Center(
                 child: Text(
                   'LOGIN',
                   style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                 ),
               ),
 
-              Text(
+              const SizedBox(height: 20),
+
+              const Text(
                 'Email',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
               ),
@@ -49,9 +70,9 @@ class _LoginViewState extends State<LoginView> {
                 ),
               ),
 
-              SizedBox(height: 25),
+              const SizedBox(height: 25),
 
-              Text(
+              const Text(
                 'Senha',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
               ),
@@ -72,10 +93,10 @@ class _LoginViewState extends State<LoginView> {
                 ),
               ),
 
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
 
               Align(
-                alignment: AlignmentGeometry.centerRight,
+                alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () {
                     Navigator.pushNamed(context, 'redefinir_senha');
@@ -87,29 +108,57 @@ class _LoginViewState extends State<LoginView> {
                 ),
               ),
 
-              SizedBox(height: 50),
+              const SizedBox(height: 30),
 
+              // Botão ACESSAR normal
               SizedBox(
                 width: double.infinity,
-                height: 40,
+                height: 45,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF4B83AE),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
-                    )
+                    ),
                   ),
                   onPressed: () {
                     Navigator.pushNamed(context, 'home_mapa');
                   }, 
-                  child: Text(
+                  child: const Text(
                     'ACESSAR',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
-                  )),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 15),
+
+              // --- NOVO BOTÃO: Entrar com o Google ---
+              SizedBox(
+                width: double.infinity,
+                height: 45,
+                child: OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    side: const BorderSide(color: Color(0xFF4B83AE), width: 1.5),
+                  ),
+                  icon: const Icon(Icons.g_mobiledata, size: 30, color: Color(0xFF4B83AE)),
+                  label: const Text(
+                    'Entrar com o Google',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF4B83AE),
+                    ),
+                  ),
+                  onPressed: _signInWithGoogle,
+                ),
               ),
             ],
           ),

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "990924509898",
+    "project_id": "ampara-pet-tcc",
+    "storage_bucket": "ampara-pet-tcc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:990924509898:android:e68564895966c585fb1a33",
+        "android_client_info": {
+          "package_name": "com.example.geolocaliza_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAaB-XDiIel85Q1H9Y7Nao9PyO5btPEdJ8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

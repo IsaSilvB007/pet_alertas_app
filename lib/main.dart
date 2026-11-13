@@ -1,5 +1,6 @@
 import 'package:device_preview_plus/device_preview_plus.dart';
 import 'package:flutter/material.dart';
+
 import 'package:geolocaliza_app/view/avisos_view.dart';
 import 'package:geolocaliza_app/view/emitir_alerta_view.dart';
 import 'package:geolocaliza_app/view/gerenciar_alertas_view.dart';
@@ -8,13 +9,19 @@ import 'package:geolocaliza_app/view/perfil_view.dart';
 import 'package:geolocaliza_app/view/sobre_ongs_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
 import 'view/cadastro_usuario_view.dart';
 import 'view/login_view.dart';
 import 'view/home_mapa_view.dart';
 import 'view/redefinir_senha_view.dart';
 import 'view/sobre_view.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   runApp(DevicePreview(builder: (context) => const MainApp()));
 }
 
@@ -38,8 +45,7 @@ class MainApp extends StatelessWidget {
         ),
 
         //Fonte Poppins unificada para todo o app
-        textTheme: GoogleFonts.poppinsTextTheme(
-          Theme.of(context).textTheme),
+        textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
 
         //Cursor e seleção de texto em azul
         textSelectionTheme: const TextSelectionThemeData(
@@ -48,12 +54,9 @@ class MainApp extends StatelessWidget {
         ),
       ),
 
-
-
       //
       // ROTAS
       //
-
       initialRoute: 'home_view',
       routes: {
         'home_view': (context) => const HomeView(),
@@ -62,11 +65,11 @@ class MainApp extends StatelessWidget {
         'home_mapa': (context) => const HomeMapaView(),
         'redefinir_senha': (context) => const RedefinirSenhaView(),
         'sobre': (context) => const SobreView(),
-        'emitir_alerta':(context) => const EmitirAlertaView(),
-        'avisos':(context) => const AvisosView(),
-        'gerenciar_alertas':(context) => const GerenciarAlertasView(),
-        'sobre_ongs':(context) => const SobreOngsView(),
-        'perfil':(context) => const PerfilView(),
+        'emitir_alerta': (context) => const EmitirAlertaView(),
+        'avisos': (context) => const AvisosView(),
+        'gerenciar_alertas': (context) => const GerenciarAlertasView(),
+        'sobre_ongs': (context) => const SobreOngsView(),
+        'perfil': (context) => const PerfilView(),
       },
 
       onUnknownRoute: (settings) {
