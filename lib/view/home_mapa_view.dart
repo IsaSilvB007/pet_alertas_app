@@ -196,7 +196,7 @@ class _HomeMapaViewState extends State<HomeMapaView> {
                         options: MapOptions(
                           initialCenter: _initialPosition,
                           initialZoom: 15,
-                          onTap: (_, __) {
+                          onTap: (_, _) {
                             // Fecha o pop-up ao clicar no mapa vazio
                             if (_alertaSelecionado != null) {
                               setState(() => _alertaSelecionado = null);
