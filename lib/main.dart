@@ -15,6 +15,7 @@ import 'firebase_options.dart';
 import 'view/cadastro_usuario_view.dart';
 import 'view/login_view.dart';
 import 'view/home_mapa_view.dart';
+import 'view/home_ong_view.dart'; // <-- 1. IMPORTADO O PAINEL DA ONG
 import 'view/redefinir_senha_view.dart';
 import 'view/sobre_view.dart';
 
@@ -63,6 +64,7 @@ class MainApp extends StatelessWidget {
         'login': (context) => const LoginView(),
         'cadastro_usuario': (context) => const CadastroUsuarioView(),
         'home_mapa': (context) => const HomeMapaView(),
+        'home_ong': (context) => const HomeOngView(), // <-- 2. ROTA REGISTADA PARA A ONG
         'redefinir_senha': (context) => const RedefinirSenhaView(),
         'sobre': (context) => const SobreView(),
         'emitir_alerta': (context) => const EmitirAlertaView(),

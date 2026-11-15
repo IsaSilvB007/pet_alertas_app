@@ -11,6 +11,9 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   bool _esconderSenha = true;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  
+  // Variável de estado para controlar o perfil selecionado ('cidadao' ou 'ong')
+  String _perfilSelecionado = 'cidadao';
 
   // Função para fazer login com o Google (Adaptada para Web e Mobile)
   Future<void> _signInWithGoogle() async {
@@ -21,8 +24,9 @@ class _LoginViewState extends State<LoginView> {
       );
 
       if (userCredential.user != null && mounted) {
-        // Se o login for bem-sucedido, avança para o mapa
-        Navigator.pushReplacementNamed(context, 'home_mapa');
+        // Redireciona com base no perfil escolhido no seletor
+        String rotaDestino = _perfilSelecionado == 'ong' ? 'home_ong' : 'home_mapa';
+        Navigator.pushReplacementNamed(context, rotaDestino);
       }
     } catch (e) {
       debugPrint('Erro ao fazer login com o Google: $e');
@@ -39,7 +43,6 @@ class _LoginViewState extends State<LoginView> {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          // Adicionado para evitar overflow em telas menores
           padding: const EdgeInsets.all(20),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -52,13 +55,59 @@ class _LoginViewState extends State<LoginView> {
                 ),
               ),
 
-              const SizedBox(height: 50),
+              const SizedBox(height: 30),
 
               const Center(
                 child: Text(
                   'LOGIN',
                   style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                 ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // --- SELETOR DE PERFIL (Cidadão vs ONG) ---
+              const Text(
+                'Entrar como:',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Color(0xFF4B83AE)),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: ChoiceChip(
+                      label: const Center(child: Text('Cidadão')),
+                      selected: _perfilSelecionado == 'cidadao',
+                      selectedColor: const Color(0xFF4B83AE),
+                      labelStyle: TextStyle(
+                        color: _perfilSelecionado == 'cidadao' ? Colors.white : Colors.black87,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      onSelected: (selected) {
+                        setState(() {
+                          _perfilSelecionado = 'cidadao';
+                        });
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ChoiceChip(
+                      label: const Center(child: Text('ONG / Gestão')),
+                      selected: _perfilSelecionado == 'ong',
+                      selectedColor: const Color(0xFFFF7043), // Destaque visual em coral para a ONG
+                      labelStyle: TextStyle(
+                        color: _perfilSelecionado == 'ong' ? Colors.white : Colors.black87,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      onSelected: (selected) {
+                        setState(() {
+                          _perfilSelecionado = 'ong';
+                        });
+                      },
+                    ),
+                  ),
+                ],
               ),
 
               const SizedBox(height: 20),
@@ -115,25 +164,27 @@ class _LoginViewState extends State<LoginView> {
                 ),
               ),
 
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
 
-              // Botão ACESSAR normal
+              // Botão ACESSAR com redirecionamento dinâmico
               SizedBox(
                 width: double.infinity,
                 height: 45,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF4B83AE),
+                    backgroundColor: _perfilSelecionado == 'ong' ? const Color(0xFFFF7043) : const Color(0xFF4B83AE),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                   onPressed: () {
-                    Navigator.pushNamed(context, 'home_mapa');
+                    // Direciona com base na escolha do ChoiceChip
+                    String rotaDestino = _perfilSelecionado == 'ong' ? 'home_ong' : 'home_mapa';
+                    Navigator.pushReplacementNamed(context, rotaDestino);
                   },
-                  child: const Text(
-                    'ACESSAR',
-                    style: TextStyle(
+                  child: Text(
+                    _perfilSelecionado == 'ong' ? 'ACESSAR PAINEL ONG' : 'ACESSAR',
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -144,7 +195,7 @@ class _LoginViewState extends State<LoginView> {
 
               const SizedBox(height: 15),
 
-              // --- NOVO BOTÃO: Entrar com o Google ---
+              // --- Botão: Entrar com o Google ---
               SizedBox(
                 width: double.infinity,
                 height: 45,
