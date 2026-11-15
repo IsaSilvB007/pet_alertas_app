@@ -35,6 +35,7 @@ class HomeOngView extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: const Color(0xFF1E2A38),
         elevation: 0,
+        automaticallyImplyLeading: false, // Remove completamente qualquer seta de voltar automática
         title: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -56,7 +57,21 @@ class HomeOngView extends StatelessWidget {
           ],
         ),
         actions: [
-          // Botão rápido para voltar à seleção de perfil durante a demonstração
+          // Ícone de Notificações interativo
+          IconButton(
+            tooltip: 'Notificações',
+            icon: const Icon(Icons.notifications_active_outlined, color: Colors.white),
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Monitorização ativa: novos alertas aparecem instantaneamente na fila.'),
+                  backgroundColor: Color(0xFF1E2A38),
+                  duration: Duration(seconds: 3),
+                ),
+              );
+            },
+          ),
+          // Botão rápido para trocar de perfil
           IconButton(
             tooltip: 'Trocar Perfil',
             icon: const Icon(Icons.logout, color: Colors.white),
