@@ -40,7 +40,6 @@ class _EmitirAlertaViewState extends State<EmitirAlertaView> {
       }
 
       // 2. Gravar no Firestore
-      // 3. Gravar no Firestore
       await FirebaseFirestore.instance.collection('alertas').add({
         'especie': _especieController.text.trim(),
         'saude': _saudeController.text.trim(),
