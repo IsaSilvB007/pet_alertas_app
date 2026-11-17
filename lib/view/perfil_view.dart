@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../controller/perfil_controller.dart';
 
 class PerfilView extends StatefulWidget {
   const PerfilView({super.key});
@@ -9,8 +10,14 @@ class PerfilView extends StatefulWidget {
 
 class _PerfilViewState extends State<PerfilView> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _nomeController = TextEditingController(text: 'Isadora Bispo');
-  final String _emailFixo = 'isadora.bispo@aluno.frp.br';
+  late final TextEditingController _nomeController;
+
+  @override
+  void initState() {
+    super.initState();
+    // Inicializa o campo com o nome atual guardado no controlador global
+    _nomeController = TextEditingController(text: PerfilController.nomeUsuario.value);
+  }
 
   @override
   void dispose() {
@@ -20,18 +27,22 @@ class _PerfilViewState extends State<PerfilView> {
 
   void _salvarPerfil() {
     if (_formKey.currentState!.validate()) {
+      // Atualiza o valor global no controlador (reflete no menu hamburger instantaneamente)
+      PerfilController.nomeUsuario.value = _nomeController.text.trim();
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Perfil atualizado com sucesso!'),
           backgroundColor: Color(0xFF34D399),
         ),
       );
+      Navigator.pop(context);
     }
   }
 
   void _cancelarEdicao() {
     setState(() {
-      _nomeController.text = 'Isadora Bispo';
+      _nomeController.text = PerfilController.nomeUsuario.value;
     });
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -178,7 +189,7 @@ class _PerfilViewState extends State<PerfilView> {
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Text(
-                                  _emailFixo,
+                                  PerfilController.emailUsuario.value,
                                   style: const TextStyle(
                                     color: Color(0xFF64748B),
                                     fontSize: 15,

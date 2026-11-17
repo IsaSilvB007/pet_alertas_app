@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
+import '../controller/perfil_controller.dart';
 
 class HomeMapaView extends StatefulWidget {
   const HomeMapaView({super.key});
@@ -61,7 +62,7 @@ class _HomeMapaViewState extends State<HomeMapaView> {
         _loadingLocation = false;
       });
 
-      // Move a câmara do mapa para a posição do utilizador
+      // Move a câmera do mapa para a posição do usuário
       _mapController.move(_initialPosition, 15);
     } catch (e) {
       debugPrint('Erro ao obter localização: $e');
@@ -85,20 +86,27 @@ class _HomeMapaViewState extends State<HomeMapaView> {
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
-              const UserAccountsDrawerHeader(
-                decoration: BoxDecoration(color: Colors.transparent),
-                accountName: Text(
-                  'Isadora Bispo',
-                  style: TextStyle(
-                    color: Color(0xFF1E293B),
-                    fontWeight: FontWeight.bold,
-                  ),
+              UserAccountsDrawerHeader(
+                decoration: const BoxDecoration(color: Colors.transparent),
+                // USANDO O VALUELISTENABLEBUILDER PARA ATUALIZAR O NOME EM TEMPO REAL
+                accountName: ValueListenableBuilder<String>(
+                  valueListenable: PerfilController.nomeUsuario,
+                  builder: (context, nomeAtual, child) {
+                    return Text(
+                      nomeAtual,
+                      style: const TextStyle(
+                        color: Color(0xFF1E293B),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    );
+                  },
                 ),
-                accountEmail: Text(
+                accountEmail: const Text(
                   'isadora.bispo@aluno.frp.br',
                   style: TextStyle(color: Color(0xFF475569)),
                 ),
-                currentAccountPicture: CircleAvatar(
+                currentAccountPicture: const CircleAvatar(
                   backgroundColor: Color(0xFF334155),
                   child: Icon(Icons.person, color: Colors.white),
                 ),
@@ -283,7 +291,7 @@ class _HomeMapaViewState extends State<HomeMapaView> {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        'Registado em: ${_alertaSelecionado!['dataCriacao']}',
+                        'Registrado em: ${_alertaSelecionado!['dataCriacao']}',
                         style: const TextStyle(
                           color: Colors.white54,
                           fontSize: 12,
@@ -302,7 +310,7 @@ class _HomeMapaViewState extends State<HomeMapaView> {
 
 Widget _buildHeaderOverlay(
     BuildContext context, GlobalKey<ScaffoldState> scaffoldKey) {
-  // Obtém a altura da barra de status do telemóvel para preencher perfeitamente o topo
+  // Obtém a altura da barra de status do celular para preencher perfeitamente o topo
   final double topPadding = MediaQuery.of(context).padding.top;
 
   return Positioned(

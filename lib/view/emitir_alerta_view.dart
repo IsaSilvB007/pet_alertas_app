@@ -245,7 +245,7 @@ class _EmitirAlertaViewState extends State<EmitirAlertaView> {
                         style: const TextStyle(color: Colors.white),
                       ),
 
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 60),
 
                       // Botão Publicar com verificação de loading
                       SizedBox(
