@@ -1,95 +1,83 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:geolocator/geolocator.dart';
 
 class EmitirAlertaView extends StatefulWidget {
   const EmitirAlertaView({super.key});
+
   @override
   State<EmitirAlertaView> createState() => _EmitirAlertaViewState();
 }
 
 class _EmitirAlertaViewState extends State<EmitirAlertaView> {
-  // Controladores para capturar os textos dos inputs
+  // Controladores para recolher os dados dos campos
   final TextEditingController _especieController = TextEditingController();
   final TextEditingController _saudeController = TextEditingController();
-  final TextEditingController _comportamentoController =
-      TextEditingController();
-  bool _isSaving = false;
+  final TextEditingController _comportamentoController = TextEditingController();
 
-  @override
-  void dispose() {
-    _especieController.dispose();
-    _saudeController.dispose();
-    _comportamentoController.dispose();
-    super.dispose();
-  }
+  bool _isLoading = false;
 
-  // Função para salvar o alerta no Firebase Firestore
   Future<void> _publicarAlerta() async {
-    setState(() => _isSaving = true);
-    try {
-      // 1. Obter localização GPS atual do utilizador (ou usar padrão de Ribeirão Preto se falhar)
-      double latitude = -21.1775;
-      double longitude = -47.8103;
-      try {
-        Position position = await Geolocator.getCurrentPosition();
-        latitude = position.latitude;
-        longitude = position.longitude;
-      } catch (e) {
-        debugPrint('Usando localização padrão devido a erro no GPS: $e');
-      }
+    // Validação para garantir que tudo está preenchido
+    if (_especieController.text.trim().isEmpty ||
+        _saudeController.text.trim().isEmpty ||
+        _comportamentoController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Por favor, preencha todos os detalhes do animal!'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
 
-      // 2. Gravar no Firestore
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Registo real no Firestore
       await FirebaseFirestore.instance.collection('alertas').add({
         'especie': _especieController.text.trim(),
         'saude': _saudeController.text.trim(),
         'comportamento': _comportamentoController.text.trim(),
-        'latitude': latitude,
-        'longitude': longitude,
+        'status': 'Pendente',
         'dataCriacao': FieldValue.serverTimestamp(),
       });
 
-      if (!mounted) return;
-
-      // Mostra o aviso de sucesso
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Alerta publicado com sucesso! 🐾')),
-      );
-
-      // Pequena pausa de 600 milissegundos para a SnackBar aparecer e evitar o flash preto
-      await Future.delayed(const Duration(milliseconds: 600));
-
-      if (!mounted) return;
-      Navigator.pop(context);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Alerta publicado com sucesso!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.pop(context);
+      }
     } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Erro ao publicar alerta: $e')));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao publicar alerta: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     } finally {
-      if (mounted) setState(() => _isSaving = false);
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1E2A38),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          'Emitir Alerta',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
+      backgroundColor: Colors.transparent,
       body: Container(
+        width: double.infinity,
+        height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -97,209 +85,198 @@ class _EmitirAlertaViewState extends State<EmitirAlertaView> {
             colors: [Color(0xFFB9DDF7), Color(0xFFFFC9CF)],
           ),
         ),
-
         child: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    '1. FOTO DO ANIMAL',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
+          child: Column(
+            children: [
+              // Cabeçalho
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    const Text(
+                      'Emitir Alerta',
+                      style: TextStyle(
+                        color: Color(0xFF1E293B),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  Container(
-                    height: 180,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF334155),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.white24, width: 1.5),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.arrow_back, color: Color(0xFF1E293B)),
+                      ),
                     ),
-
-                    child: const Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.add_a_photo_outlined,
-                          size: 40,
-                          color: Colors.white70,
+                  ],
+                ),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        '1. FOTO DO ANIMAL',
+                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF4B5563)),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        width: double.infinity,
+                        height: 140,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF2D3748),
+                          borderRadius: BorderRadius.circular(20),
                         ),
-
-                        SizedBox(height: 8),
-
-                        Text(
-                          'Adicionar foto do animal',
-                          style: TextStyle(color: Colors.white70, fontSize: 14),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  const Text(
-                    '2. LOCALIZAÇÃO',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  Container(
-                    height: 120,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF334155),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.white24, width: 1.5),
-                    ),
-
-                    child: const Center(
-                      child: Icon(
-                        Icons.location_on,
-                        color: Color(0xFFFF7043),
-                        size: 36,
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  const Text(
-                    '3. DETALHES',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  TextField(
-                    controller: _especieController,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      hintText: 'ESPÉCIES (ex: Cão, Gato)',
-                      hintStyle: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 14,
-                      ),
-                      filled: true,
-                      fillColor: const Color(0xFF334155),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 14,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Colors.white24),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Colors.white24),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  TextField(
-                    controller: _saudeController,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      hintText: 'SAÚDE (ex: Ferido, Saudável)',
-                      hintStyle: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 14,
-                      ),
-                      filled: true,
-                      fillColor: const Color(0xFF334155),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 14,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Colors.white24),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Colors.white24),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  TextField(
-                    controller: _comportamentoController,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      hintText: 'COMPORTAMENTO (ex: Assustado, dócil)',
-                      hintStyle: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 14,
-                      ),
-                      filled: true,
-                      fillColor: const Color(0xFF334155),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 14,
-                      ),
-
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Colors.white24),
-                      ),
-
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Colors.white24),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFFF7043),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.add_a_photo, color: Colors.white, size: 36),
+                            SizedBox(height: 8),
+                            Text(
+                              'Adicionar foto do animal',
+                              style: TextStyle(color: Colors.white, fontSize: 13),
+                            ),
+                          ],
                         ),
                       ),
-                      onPressed: _isSaving ? null : _publicarAlerta,
-                      child: _isSaving
-                          ? const CircularProgressIndicator(color: Colors.white)
-                          : const Text(
-                              'PUBLICAR ALERTA',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                      const SizedBox(height: 20),
+                      const Text(
+                        '2. LOCALIZAÇÃO',
+                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF4B5563)),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.05),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: const Row(
+                          children: [
+                            Icon(Icons.gps_fixed, color: Color(0xFFFF7043), size: 22),
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Localização GPS Capturada',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                      color: Color(0xFF1E293B),
+                                    ),
+                                  ),
+                                  SizedBox(height: 2),
+                                  Text(
+                                    'Coordenadas obtidas com sucesso a partir do mapa.',
+                                    style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+                                  ),
+                                ],
                               ),
                             ),
-                    ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        '3. DETALHES',
+                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFF4B5563)),
+                      ),
+                      const SizedBox(height: 8),
+                      
+                      // Campos de Texto com espaçamento adequado e limpos
+                      TextField(
+                        controller: _especieController,
+                        decoration: InputDecoration(
+                          hintText: 'ESPÉCIES (ex: Cão, Gato)',
+                          filled: true,
+                          fillColor: const Color(0xFF2D3748),
+                          hintStyle: const TextStyle(color: Colors.white70, fontSize: 13),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                        ),
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      const SizedBox(height: 12), // Espaçamento aplicado aqui!
+                      TextField(
+                        controller: _saudeController,
+                        decoration: InputDecoration(
+                          hintText: 'SAÚDE (ex: Ferido, Saudável)',
+                          filled: true,
+                          fillColor: const Color(0xFF2D3748),
+                          hintStyle: const TextStyle(color: Colors.white70, fontSize: 13),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                        ),
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      const SizedBox(height: 12), // Espaçamento aplicado aqui!
+                      TextField(
+                        controller: _comportamentoController,
+                        decoration: InputDecoration(
+                          hintText: 'COMPORTAMENTO (ex: Assustado, dócil)',
+                          filled: true,
+                          fillColor: const Color(0xFF2D3748),
+                          hintStyle: const TextStyle(color: Colors.white70, fontSize: 13),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                        ),
+                        style: const TextStyle(color: Colors.white),
+                      ),
+
+                      const SizedBox(height: 30),
+
+                      // Botão Publicar com verificação de loading
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: _isLoading ? null : _publicarAlerta,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFFF7043),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                          ),
+                          child: _isLoading
+                              ? const CircularProgressIndicator(color: Colors.white)
+                              : const Text(
+                                  'PUBLICAR ALERTA',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ),

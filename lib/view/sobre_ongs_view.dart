@@ -1,37 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-class SobreOngsView extends StatefulWidget {
+class SobreOngsView extends StatelessWidget {
   const SobreOngsView({super.key});
 
-  @override
-  State<SobreOngsView> createState() => _SobreOngsViewState();
-}
+  final List<Map<String, String>> _ongs = const [
+    {
+      'nome': 'Abrace Um Amigo',
+      'cidade': 'Ribeirão Preto - SP',
+      'descricao': 'Resgate, reabilitação física e psicológica, e mediação de adoções rigorosamente responsáveis.',
+      'pix': '12.345.678/0001-90',
+    },
+    {
+      'nome': 'Projeto Amigo dos Animais',
+      'cidade': 'Dumont - SP',
+      'descricao': 'Apoio a animais de rua, castração comunitária e feiras de adoção mensais na região.',
+      'pix': '98.765.432/0001-12',
+    },
+    {
+      'nome': 'Lar do Cão Abandonado',
+      'cidade': 'Ribeirão Preto - SP',
+      'descricao': 'Abrigo temporário e reabilitação de cães resgatados de situações de maus-tratos.',
+      'pix': '45.678.901/0001-55',
+    },
+  ];
 
-class _SobreOngsViewState extends State<SobreOngsView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF1E293B)),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: const Text(
-          'PERFIL ONGS',
-          style: TextStyle(
-            color: Color(0xFF4B5563),
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.1,
-          ),
-        ),
-        centerTitle: true,
-      ),
+      backgroundColor: Colors.transparent,
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -43,212 +40,161 @@ class _SobreOngsViewState extends State<SobreOngsView> {
           ),
         ),
         child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // 1. Banner da ONG com bordas arredondadas e fundo limpo
-                Container(
-                  width: double.infinity,
-                  height: 140,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8.0,
+                  vertical: 8.0,
+                ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    const Text(
+                      'ONGs PARCEIRAS',
+                      style: TextStyle(
+                        color: Color(0xFF4B5563),
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.1,
                       ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: Image.asset(
-                      'assets/images/header_logo_ong.png',
-                      width: double.infinity,
-                      fit: BoxFit.cover,
+                    ),
+                    Align(
                       alignment: Alignment.centerLeft,
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-
-                // Logo redonda da ONG
-                Container(
-                  height: 80,
-                  width: 80,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: ClipOval(
-                    child: Image.asset(
-                      'assets/images/logo_ong.png',
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => const Icon(
-                        Icons.pets,
-                        size: 40,
-                        color: Color(0xFF1E5B5B),
+                      child: IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: const Icon(Icons.arrow_back, color: Color(0xFF1E293B)),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-
-                const SizedBox(height: 16),
-
-                // 2. Nome da ONG
-                const Text(
-                  'ABRACE UM AMIGO',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w900,
-                    color: Color(0xFF1E5B5B),
-                    letterSpacing: 0.5,
-                  ),
-                ),
-
-                const SizedBox(height: 10),
-
-                // 3. Descrição institucional
-                const Text(
-                  'Transformar o cenário do abandono animal através do resgate, reabilitação física e psicológica, e da mediação de adoções rigorosamente responsáveis. Atuamos de forma prática para garantir a saúde de cães e gatos vulneráveis e conscientizar a sociedade sobre o manejo populacional e a guarda consciente.',
-                  textAlign: TextAlign.justify,
-                  style: TextStyle(
-                    fontSize: 13,
-                    height: 1.35,
-                    color: Color(0xFF2D3748),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-
-                // 4. Card de Doação via Pix
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFF7043),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Column(
-                    children: [
-                      const Text(
-                        'DOAÇÃO VIA PIX',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontSize: 16,
-                        ),
+              ),
+              const SizedBox(height: 12),
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  itemCount: _ongs.length,
+                  itemBuilder: (context, index) {
+                    final ong = _ongs[index];
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 16),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.05),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 14),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            height: 110,
-                            width: 110,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: const Icon(
-                              Icons.qr_code_2,
-                              size: 80,
-                              color: Colors.black87,
+                          Row(
+                            children: [
+                              const CircleAvatar(
+                                backgroundColor: Color(0xFFFF7043),
+                                radius: 20,
+                                child: Icon(Icons.pets, color: Colors.white, size: 18),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      ong['nome']!,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF1E293B),
+                                      ),
+                                    ),
+                                    Text(
+                                      ong['cidade']!,
+                                      style: const TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Divider(height: 24),
+                          Text(
+                            ong['descricao']!,
+                            style: const TextStyle(
+                              color: Color(0xFF475569),
+                              fontSize: 13,
                             ),
                           ),
-                          const SizedBox(width: 20),
-                          TextButton.icon(
-                            onPressed: () {},
-                            style: TextButton.styleFrom(
-                              foregroundColor: Colors.white,
+                          const SizedBox(height: 16),
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.orange.shade50,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.orange.shade200),
                             ),
-                            icon: const Icon(Icons.copy_rounded, size: 24),
-                            label: const Text(
-                              'Copiar',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'Chave PIX (CNPJ):',
+                                      style: TextStyle(fontSize: 10, color: Colors.grey),
+                                    ),
+                                    Text(
+                                      ong['pix']!,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13,
+                                        color: Color(0xFF1E293B),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                ElevatedButton.icon(
+                                  onPressed: () {
+                                    Clipboard.setData(ClipboardData(text: ong['pix']!));
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('PIX da ${ong['nome']} copiado!'),
+                                        backgroundColor: const Color(0xFF1E293B),
+                                      ),
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFFFF7043),
+                                    foregroundColor: Colors.white,
+                                    elevation: 0,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                  ),
+                                  icon: const Icon(Icons.copy, size: 14),
+                                  label: const Text('Copiar', style: TextStyle(fontSize: 12)),
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
-                    ],
-                  ),
+                    );
+                  },
                 ),
-
-                const SizedBox(height: 24),
-
-                // 5. Título da seção de pets
-                const Text(
-                  'CUIDADO: ALTO RISCO DE PAIXÃO!',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF374151),
-                    letterSpacing: 0.5,
-                  ),
-                ),
-
-                const SizedBox(height: 14),
-
-                // 6. Linha com os cards dos animais
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildPetCard('assets/images/pet4.jpg'),
-                    _buildPetCard('assets/images/pet2.jpg'),
-                    _buildPetCard('assets/images/pet3.jpg'),
-                  ],
-                ),
-
-                // Margem inferior para a rolagem ser perfeita
-                const SizedBox(height: 30),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  // Widget auxiliar para os cards dos pets
-  Widget _buildPetCard(String imagePath) {
-    return Container(
-      width: 95,
-      height: 95,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(18),
-        child: Image.asset(
-          imagePath,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) => const Icon(
-            Icons.pets,
-            color: Colors.grey,
-            size: 40,
+              ),
+            ],
           ),
         ),
       ),
